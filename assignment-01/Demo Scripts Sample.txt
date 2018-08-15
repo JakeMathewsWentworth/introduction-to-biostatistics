@@ -1,0 +1,41 @@
+/* Generated Code (IMPORT) */
+/* Source File: CF.xlsx */
+/* Source Path: /folders/myfolders/Lectures/Lecture01/A01 */
+/* Code generated on: 5/13/18, 9:10 PM */
+
+%web_drop_table(WORK.IMPORT);
+
+
+FILENAME REFFILE '/folders/myfolders/Lectures/Lecture01/A01/CF.xlsx';
+
+PROC IMPORT DATAFILE=REFFILE
+	DBMS=XLSX
+	OUT=WORK.IMPORT;
+	GETNAMES=YES;
+RUN;
+
+PROC CONTENTS DATA=WORK.IMPORT; RUN;
+
+
+%web_open_table(WORK.IMPORT);
+
+proc print data = import (obs = 10); run;
+
+proc means data = import; var age; run;
+
+data a1; set import; 
+length agegrp $8;
+lgage = log(age);
+if age <= 30 then agegrp = " >= 30";
+else if age <= 50 then agegrp = "31 - 50";
+else if age <= 65 then agegrp = "51 - 65";
+else agegrp = "<= 65";
+run;
+
+proc freq data = a1; tables agegrp/list missing; run;
+proc print data = a1 (obs = 6)  split = "\"; 
+label agegrp = "Age\Group";
+run;
+
+proc sort data = a1 nodupkey out = a2; by hospital; run;
+
